@@ -2,6 +2,7 @@
     <div class="notificacoes">
         <article
             class="message is-success"
+            :class="contexto[notificacao.tipo]"
             v-for="notificacao in notificacoes"
             :key="notificacao.id"
         >
@@ -17,12 +18,21 @@
 
 <script lang="ts">
 
-import { computed } from '@vue/reactivity';
-import { defineComponent } from 'vue';
-import { useStore } from 'vuex';
+import { defineComponent, computed } from 'vue';
+import { useStore } from '@/store';
+import { TipoNotificacao } from '@/interface/INotificacao';
 
 export default defineComponent({
     name: 'Notificacoes',
+    data () {
+        return {
+            contexto: {
+                [TipoNotificacao.SUCESSO]: 'is-success',
+                [TipoNotificacao.ATENCAO]: 'is-warning',
+                [TipoNotificacao.FALHA]: 'is-danger'
+            }
+        }
+    },
     setup () {
         const store = useStore()
         return {

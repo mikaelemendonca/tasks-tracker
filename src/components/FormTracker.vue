@@ -29,6 +29,8 @@ import { key } from '@/store';
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'vuex';
 import TemporizadorTracker from './TemporizadorTracker.vue'
+import { NOTIFICAR } from '@/store/tipos-mutacoes';
+import { TipoNotificacao } from '@/interface/INotificacao';
 
 export default defineComponent({
     name: 'FormTracker',
@@ -49,6 +51,16 @@ export default defineComponent({
             console.log('Tempo da tarefa = ' , tempoDecorrido);            
             console.log('Descricao = ' , this.descricao);     
 
+            const projeto = this.projetos.find((p) => p.id == this.idProjeto); // primeiro, buscamos pelo projeto
+            if(!projeto) { // se o projeto não existe...
+                this.store.commit(NOTIFICAR, {
+                    titulo: 'Ops!',
+                    texto: "Selecione um projeto antes de finalizar a tarefa!",
+                    tipo: TipoNotificacao.FALHA,
+                }); // notificamos o usuário
+                return; // ao fazer return aqui, o restante do método salvarTarefa não será executado. chamamos essa técnica de early return :)
+            }
+
             this.$emit('aoSalvarTarefa', {
                 duracaoEmSegundos: tempoDecorrido,
                 descricao: this.descricao,
@@ -63,6 +75,7 @@ export default defineComponent({
     setup() {
         const store = useStore(key)
         return {
+            store,
             projetos: computed(() => store.state.projetos)
         }
     }
