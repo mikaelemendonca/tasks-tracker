@@ -27,6 +27,7 @@ import { defineComponent } from 'vue';
 import { useStore } from '@/store';
 import { ADICIONA_PROJETO, ALTERA_PROJETO, NOTIFICAR } from "@/store/tipos-mutacoes";
 import { TipoNotificacao } from '@/interface/INotificacao';
+import { notificacaoMixin } from '@/mixins/notificar'
 
 export default defineComponent({
     name: 'FormProjeto',
@@ -35,6 +36,9 @@ export default defineComponent({
             type: String
         }
     },
+    mixins: [
+        notificacaoMixin
+    ],
     data () {
         return {
             nomeDoProjeto: "",
@@ -51,11 +55,11 @@ export default defineComponent({
                 this.store.commit(ADICIONA_PROJETO, this.nomeDoProjeto)
             }
             this.nomeDoProjeto = ''
-            this.store.commit(NOTIFICAR, {
-                titulo: 'Novo projeto foi salvo',
-                texto: 'Prontinho ;) seu projeto já está disponível',
-                tipo: TipoNotificacao.SUCESSO
-            })
+            this.notificar(
+                'Novo projeto foi salvo',
+                'Prontinho ;) seu projeto já está disponível',
+                TipoNotificacao.SUCESSO
+            )
             this.$router.push('/projetos')
         }
     },
