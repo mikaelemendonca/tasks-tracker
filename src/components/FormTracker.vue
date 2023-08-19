@@ -31,6 +31,7 @@ import { useStore } from 'vuex';
 import TemporizadorTracker from './TemporizadorTracker.vue'
 import { NOTIFICAR } from '@/store/tipos-mutacoes';
 import { TipoNotificacao } from '@/interface/INotificacao';
+import { OBTER_PROJETOS } from '@/store/tipos-acoes';
 
 export default defineComponent({
     name: 'FormTracker',
@@ -74,6 +75,8 @@ export default defineComponent({
     },
     setup() {
         const store = useStore(key)
+        store.dispatch(OBTER_PROJETOS)
+
         return {
             store,
             projetos: computed(() => store.state.projetos)
