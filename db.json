@@ -7,6 +7,10 @@
     {
       "nome": "Teste",
       "id": 2
+    },
+    {
+      "nome": "Estudando",
+      "id": 3
     }
   ],
   "tarefas": [
