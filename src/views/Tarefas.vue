@@ -42,7 +42,7 @@
     .modal-card-foot, .modal-card-head {
         flex-shrink: 1 !important;
     }
-    header {
+    .modal-card-head {
         height: 10vh !important;
     }
 </style>
