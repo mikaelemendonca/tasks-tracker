@@ -5,6 +5,15 @@
         <BoxTracker v-if="listaEstaVazia">
             Você ainda não inicou tarefas hoje =(
         </BoxTracker>
+
+        <div class="field">
+            <p class="control has-icons-left">
+                <input class="input" placeholder="Digite para filtrar" v-model="filtro">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-search"></i>
+                </span>
+            </p>
+        </div>
     
         <TarefaTracker v-for="(tarefa, index) in tarefas" :tarefa="tarefa" :key="index" @aoTarefaClicada="selecionarTarefa" />
         
@@ -49,7 +58,7 @@
 
 <script lang="ts">
 
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { useStore } from '@/store';
 import FormTracker from '../components/FormTracker.vue'
 import TarefaTracker from '../components/TarefaTracker.vue'
@@ -94,8 +103,17 @@ export default defineComponent({
         store.dispatch(OBTER_TAREFAS)
         store.dispatch(OBTER_PROJETOS)
 
+        const filtro = ref('')
+
+        const tarefas = computed(() =>
+            store.state.tarefa.tarefas.filter(
+                (t) => !filtro.value || t.descricao.includes(filtro.value)
+            )
+        )
+
         return {
-            tarefas: computed(() => store.state.tarefa.tarefas),
+            tarefas,
+            filtro,
             store
         }
     }
