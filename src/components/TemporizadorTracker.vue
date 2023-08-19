@@ -5,7 +5,7 @@
         <BotaoTracker @clicado="iniciar" icone="fas fa-play" texto="Iniciar" :desabilitado="cronometroRodando" />
         <BotaoTracker @clicado="finalizar" icone="fas fa-stop" texto="Parar" :desabilitado="!cronometroRodando" />
 
-        <BotaoTracker texto="Finalizar" :desabilitado="!cronometroRodando" />
+        <!-- <BotaoTracker texto="Finalizar" :desabilitado="!s" /> -->
     </div>
 </template>
 
