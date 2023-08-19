@@ -26,12 +26,11 @@
 <script lang="ts">
 
 import { key } from '@/store';
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import TemporizadorTracker from './TemporizadorTracker.vue'
 import { NOTIFICAR } from '@/store/tipos-mutacoes';
 import { TipoNotificacao } from '@/interface/INotificacao';
-import { OBTER_PROJETOS } from '@/store/tipos-acoes';
 
 export default defineComponent({
     name: 'FormTracker',
@@ -41,20 +40,20 @@ export default defineComponent({
     components: {
         TemporizadorTracker
     },
-    data () {
-        return {
-            descricao: '',
-            idProjeto: ''
-        }
-    },
-    methods: {
-        finzalizarTarefa (tempoDecorrido: number) : void {
-            console.log('Tempo da tarefa = ' , tempoDecorrido);            
-            console.log('Descricao = ' , this.descricao);     
+    setup(props, { emit }) {
+        const store = useStore(key)
 
-            const projeto = this.projetos.find((p) => p.id == this.idProjeto); // primeiro, buscamos pelo projeto
+        const descricao = ref("")
+        const idProjeto = ref("")
+        const projetos = computed(() => store.state.projeto.projetos)
+
+        const finzalizarTarefa = (tempoDecorrido: number) : void => {
+            console.log('Tempo da tarefa = ' , tempoDecorrido);            
+            console.log('Descricao = ' , descricao.value);     
+
+            const projeto = projetos.value.find((p) => p.id == idProjeto.value); // primeiro, buscamos pelo projeto
             if(!projeto) { // se o projeto não existe...
-                this.store.commit(NOTIFICAR, {
+                store.commit(NOTIFICAR, {
                     titulo: 'Ops!',
                     texto: "Selecione um projeto antes de finalizar a tarefa!",
                     tipo: TipoNotificacao.FALHA,
@@ -62,24 +61,22 @@ export default defineComponent({
                 return; // ao fazer return aqui, o restante do método salvarTarefa não será executado. chamamos essa técnica de early return :)
             }
 
-            this.$emit('aoSalvarTarefa', {
+            emit('aoSalvarTarefa', {
                 duracaoEmSegundos: tempoDecorrido,
-                descricao: this.descricao,
-                projeto: this.projetos.find(
-                    proj => proj.id == this.idProjeto
+                descricao: descricao.value,
+                projeto: projetos.value.find(
+                    proj => proj.id == idProjeto.value
                 )
             })
 
-            this.descricao = '';       
+            descricao.value = '';       
         }
-    },
-    setup() {
-        const store = useStore(key)
-        store.dispatch(OBTER_PROJETOS)
 
         return {
-            store,
-            projetos: computed(() => store.state.projeto.projetos)
+            projetos,
+            descricao,
+            idProjeto,
+            finzalizarTarefa
         }
     }
 })
