@@ -1,6 +1,6 @@
 <template>
     <FormTracker @aoSalvarTarefa="salvarTarefa" />
-    
+
     <div class="lista">
         <BoxTracker v-if="listaEstaVazia">
             Você ainda não inicou tarefas hoje =(
@@ -14,38 +14,34 @@
                 </span>
             </p>
         </div>
-    
+
         <TarefaTracker v-for="(tarefa, index) in tarefas" :tarefa="tarefa" :key="index" @aoTarefaClicada="selecionarTarefa" />
-        
-        <div class="modal" :class="{ 'is-active': tarefaSelecionada }" v-if="tarefaSelecionada">
-            <div class="modal-background"></div>
-            <div class="modal-card">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">Editando Tarefa</p>
-                    <button class="delete" aria-label="close" @click="fecharModal"></button>
-                </header>
-                <section class="modal-card-body">
-                    <div class="field">
-                        <label for="descicaoDaTarefa" class="label">
-                            Nome da Tarefa
-                        </label>
-                        <input
-                            type="text"
-                            class="input"
-                            v-model="tarefaSelecionada.descricao"
-                            id="descicaoDaTarefa"
-                        />
-                    </div>
-                </section>
-                <footer class="modal-card-foot">
-                    <button class="button is-success" @click="alterarTarefa">Salvar alterações</button>
-                    <button class="button" @click="fecharModal">Cancelar</button>
-                </footer>
-            </div>
-        </div>
+
+        <Modal v-if="tarefaSelecionada != null" :mostrar="tarefaSelecionada != null">
+            <template v-slot:header>
+                <p class="modal-card-title">Editando Tarefa</p>
+                <button class="delete" aria-label="close" @click="fecharModal"></button>
+            </template>
+            <template v-slot:section>
+                <div class="field">
+                    <label for="descicaoDaTarefa" class="label">
+                        Nome da Tarefa
+                    </label>
+                    <input
+                        type="text"
+                        class="input"
+                        v-model="tarefaSelecionada.descricao"
+                        id="descicaoDaTarefa"
+                    />
+                </div>
+            </template>
+            <template v-slot:footer>
+                <button class="button is-success" @click="alterarTarefa">Salvar alterações</button>
+                <button class="button" @click="fecharModal">Cancelar</button>
+            </template>
+        </Modal>
     </div>
 </template>
-
 
 <style>
     .modal-card-foot, .modal-card-head {
@@ -63,6 +59,7 @@ import { useStore } from '@/store';
 import FormTracker from '../components/FormTracker.vue'
 import TarefaTracker from '../components/TarefaTracker.vue'
 import BoxTracker from '../components/BoxTracker.vue'
+import Modal from '../components/Modal.vue'
 import { CADASTRAR_TAREFA, OBTER_PROJETOS, OBTER_TAREFAS, ALTERAR_TAREFA } from '@/store/tipos-acoes';
 import ITarefa from '@/interface/ITarefa';
 
@@ -71,7 +68,8 @@ export default defineComponent({
     components: {
         FormTracker,
         TarefaTracker,
-        BoxTracker
+        BoxTracker,
+        Modal,
     },
     data () {
         return {
